@@ -48,6 +48,3 @@ Thumbs.db
 /coverage/
 /build/
 
-###> phpstan/phpstan ###
-phpstan.neon
-###< phpstan/phpstan ###
