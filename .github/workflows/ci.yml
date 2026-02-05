@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: workplace_booking_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare env
+        run: |
+          cp .env.test .env.test.local
+          echo 'DATABASE_URL="mysql://root:root@127.0.0.1:3306/workplace_booking_test?serverVersion=5.7&charset=utf8mb4"' >> .env.test.local
+
+      - name: Create schema
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:create --env=test
+
+      - name: Code style (check)
+        run: composer cs:check
+
+      - name: Warm up Symfony cache (dev) for PHPStan
+        run: |
+          php bin/console cache:clear --env=dev
+          php bin/console cache:warmup --env=dev
+
+      - name: Static analysis
+        run: composer stan
+
+      - name: Tests
+        run: composer test

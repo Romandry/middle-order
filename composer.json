@@ -4,17 +4,35 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "api-platform/doctrine-orm": "^4.1.28",
+        "api-platform/symfony": "^4.1.28",
+        "doctrine/doctrine-bundle": "^2.18.2",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
+        "doctrine/orm": "^3.6.2",
+        "nelmio/cors-bundle": "^2.6.1",
+        "phpdocumentor/reflection-docblock": "^6.0.1",
+        "phpstan/phpdoc-parser": "^2.3.2",
+        "symfony/asset": "7.2.*",
+        "symfony/cache": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
-        "symfony/flex": "^2",
+        "symfony/expression-language": "7.2.*",
+        "symfony/flex": "^2.10",
         "symfony/framework-bundle": "7.2.*",
+        "symfony/lock": "7.2.*",
+        "symfony/messenger": "7.2.*",
+        "symfony/property-access": "7.2.*",
+        "symfony/property-info": "7.2.*",
+        "symfony/redis-messenger": "7.2.*",
         "symfony/runtime": "7.2.*",
+        "symfony/security-bundle": "7.2.*",
+        "symfony/serializer": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
+        "symfony/validator": "7.2.*",
         "symfony/yaml": "7.2.*"
-    },
-    "require-dev": {
     },
     "config": {
         "allow-plugins": {
@@ -43,9 +61,14 @@
         "symfony/polyfill-php74": "*",
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php81": "*",
-        "symfony/polyfill-php82": "*"
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*"
     },
     "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "stan": "@php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G",
+        "cs:check": "@php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff",
+        "cs:fix": "@php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
@@ -65,5 +88,15 @@
             "allow-contrib": false,
             "require": "7.2.*"
         }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.93.1",
+        "phpstan/phpstan": "^2.1.38",
+        "phpstan/phpstan-doctrine": "^2.0.14",
+        "phpstan/phpstan-symfony": "^2.0.12",
+        "phpunit/phpunit": "^12.5.9",
+        "symfony/browser-kit": "7.2.*",
+        "symfony/css-selector": "7.2.*",
+        "symfony/maker-bundle": "^1.65.1"
     }
 }

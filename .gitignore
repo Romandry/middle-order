@@ -1,6 +1,7 @@
 
 ###> symfony/framework-bundle ###
 /.env.local
+/.env.test
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
@@ -13,10 +14,13 @@
 /vendor/
 ###< symfony/framework-bundle ###
 ### PHPUnit
+/phpunit.xml
+/.phpunit.cache/
 .phpunit.result.cache
 
 ### PHP CS Fixer
-.php-cs-fixer.cache
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
 
 ### PHPStan
 phpstan.neon.dist
@@ -45,3 +49,7 @@ Thumbs.db
 ### CI / Runtime
 /coverage/
 /build/
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
