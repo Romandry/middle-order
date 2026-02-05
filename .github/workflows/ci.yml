@@ -51,7 +51,6 @@ jobs:
       - name: Prepare env
         run: |
           cp .env.test .env.test.local
-          echo 'DATABASE_URL="pgsql://app:app@127.0.0.1:5432/middle_order_test?serverVersion=15"' >> .env.test.local
 
       - name: Create schema
         run: |
