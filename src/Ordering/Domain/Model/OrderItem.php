@@ -10,6 +10,9 @@ use App\Ordering\Domain\ValueObject\Money;
 use App\Ordering\Domain\ValueObject\Quantity;
 use App\Ordering\Domain\ValueObject\Sku;
 
+/**
+ * Domain model
+ */
 final readonly class OrderItem
 {
     public function __construct(

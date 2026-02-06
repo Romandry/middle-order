@@ -11,6 +11,9 @@ use App\Ordering\Domain\ValueObject\Money;
 use App\Ordering\Domain\ValueObject\Quantity;
 use App\Ordering\Domain\ValueObject\Sku;
 
+/**
+ * Aggregate Root
+ */
 final class Order
 {
     private string $status;
@@ -37,7 +40,12 @@ final class Order
         }
 
         foreach ($this->items as $index => $item) {
-            if ($item->sku()->toString() === $sku->toString()) {
+            $sameSku = ($item->sku()->toString() === $sku->toString());
+            $sameCurrency = ($item->unitPrice()->currency() === $unitPrice->currency());
+            $samePrice = ($item->unitPrice()->cents() === $unitPrice->cents());
+
+            // Merge only when key (SKU+PRICE+QTY) unique
+            if ($sameSku && $sameCurrency && $samePrice) {
                 $this->items[$index] = $item->withAddedQuantity($quantity);
                 return;
             }

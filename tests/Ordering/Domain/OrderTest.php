@@ -76,4 +76,22 @@ final class OrderTest extends TestCase
         self::assertCount(1, $order->items());
         self::assertSame(5, $order->items()[0]->quantity()->toInt());
     }
+
+    public function test_it_does_not_merge_items_when_price_different(): void
+    {
+        $order = Order::draft();
+
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(2),
+            Money::fromCents(200, 'EUR')
+        );
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(3),
+            Money::fromCents(120, 'EUR')
+        );
+
+        self::assertCount(2, $order->items());
+    }
 }
