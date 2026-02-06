@@ -16,7 +16,7 @@ final class Order
     private string $status;
 
     /**
-     * @var list<array{sku: Sku, quantity: Quantity, unitPrice: Money}>
+     * @var list<OrderItem>
      */
     private array $items = [];
 
@@ -36,11 +36,14 @@ final class Order
             throw new \App\Ordering\Domain\Exception\OrderIsLocked('Order cannot be modified after confirmation');
         }
 
-        $this->items[] = [
-            'sku'       => $sku,
-            'quantity'  => $quantity,
-            'unitPrice' => $unitPrice,
-        ];
+        foreach ($this->items as $index => $item) {
+            if ($item->sku()->toString() === $sku->toString()) {
+                $this->items[$index] = $item->withAddedQuantity($quantity);
+                return;
+            }
+        }
+
+        $this->items[] = new OrderItem($sku, $quantity, $unitPrice);
     }
 
     public function confirm(): void
@@ -55,5 +58,13 @@ final class Order
     public function isConfirmed(): bool
     {
         return $this->status === 'confirmed';
+    }
+
+    /**
+     * @return list<OrderItem>
+     */
+    public function items(): array
+    {
+        return $this->items;
     }
 }

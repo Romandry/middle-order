@@ -57,4 +57,23 @@ final class OrderTest extends TestCase
             Money::fromCents(100, 'EUR')
         );
     }
+
+    public function test_it_merges_items_with_same_sku_by_increasing_quantity(): void
+    {
+        $order = Order::draft();
+
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(2),
+            Money::fromCents(200, 'EUR')
+        );
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(3),
+            Money::fromCents(200, 'EUR')
+        );
+
+        self::assertCount(1, $order->items());
+        self::assertSame(5, $order->items()[0]->quantity()->toInt());
+    }
 }
