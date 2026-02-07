@@ -94,4 +94,39 @@ final class OrderTest extends TestCase
 
         self::assertCount(2, $order->items());
     }
+
+    public function test_it_calculates_line_total_for_order_item(): void
+    {
+        $order = Order::draft();
+
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(3),
+            Money::fromCents(199, 'EUR')
+        );
+
+        $item = $order->items()[0];
+
+        self::assertSame(597, $item->lineTotal()->cents());
+        self::assertSame('EUR', $item->lineTotal()->currency());
+    }
+
+    public function test_it_calculates_order_total_as_sum_of_line_totals(): void
+    {
+        $order = Order::draft();
+
+        $order->addItem(
+            new Sku('CLIP-123'),
+            new Quantity(3),
+            Money::fromCents(200, 'EUR')
+        );
+        $order->addItem(
+            new Sku('CLIP-222'),
+            new Quantity(2),
+            Money::fromCents(100, 'EUR')
+        );
+
+        self::assertSame(800, $order->total()->cents());
+        self::assertSame('EUR', $order->total()->currency());
+    }
 }

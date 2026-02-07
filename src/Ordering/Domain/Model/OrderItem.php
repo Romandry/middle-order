@@ -29,6 +29,11 @@ final readonly class OrderItem
         return new self($this->sku, $newQty, $this->unitPrice);
     }
 
+    public function lineTotal(): Money
+    {
+        return $this->unitPrice->multiply($this->quantity->toInt());
+    }
+
     public function sku(): Sku
     {
         return $this->sku;

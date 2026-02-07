@@ -54,6 +54,21 @@ final class Order
         $this->items[] = new OrderItem($sku, $quantity, $unitPrice);
     }
 
+    public function total(): Money
+    {
+        $first = $this->items[0] ?? null;
+        if (null === $first) {
+            return Money::fromCents(0, 'EUR');
+        }
+
+        $total = Money::fromCents(0, $first->unitPrice()->currency());
+
+        foreach ($this->items as $index => $item) {
+            $total = $total->add($item->lineTotal());
+        }
+        return $total;
+    }
+
     public function confirm(): void
     {
         if ($this->items === []) {
