@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 namespace App\Ordering\Domain\Model;
 
+use App\Ordering\Domain\Event\DomainEvent;
+use App\Ordering\Domain\Event\OrderConfirmed;
 use App\Ordering\Domain\Exception\OrderCannotBeConfirmed;
 use App\Ordering\Domain\ValueObject\Money;
 use App\Ordering\Domain\ValueObject\Quantity;
@@ -22,6 +24,11 @@ final class Order
      * @var list<OrderItem>
      */
     private array $items = [];
+
+    /**
+     * @var list<DomainEvent>
+     */
+    private array $events = [];
 
     private function __construct(string $status)
     {
@@ -76,6 +83,17 @@ final class Order
         }
 
         $this->status = 'confirmed';
+        $this->events[] = new OrderConfirmed();
+    }
+
+    /**
+     * @return list<DomainEvent>
+     */
+    public function pullDomainEvents(): array
+    {
+        $events = $this->events;
+        $this->events = [];
+        return $events;
     }
 
     public function isConfirmed(): bool
