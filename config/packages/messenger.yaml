@@ -12,6 +12,7 @@ framework:
         routing:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
+            'App\Ordering\Domain\Event\OrderConfirmed': sync
 
 # when@test:
 #    framework:
