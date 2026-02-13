@@ -68,5 +68,17 @@ jobs:
       - name: Static analysis
         run: composer stan
 
+      - name: Flyway migrate (test)
+        run: |
+          docker run --rm \
+            --network host \
+            -v "${{ github.workspace }}/flyway/sql:/flyway/sql" \
+            flyway/flyway:12.0.1 \
+            -url=jdbc:postgresql://localhost:5432/middle_order_test \
+            -user=app \
+            -password=app \
+            -schemas=public \
+            migrate
+
       - name: Tests
         run: composer test
