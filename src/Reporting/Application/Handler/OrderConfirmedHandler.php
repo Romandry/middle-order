@@ -19,8 +19,13 @@ final class OrderConfirmedHandler
 
     public function __invoke(OrderConfirmed $event): void
     {
-        $today = new \DateTimeImmutable('today');
+        $day = $event->occurredAt->setTime(0, 0);
 
-        $this->repository->incrementForToday($today, 1, 0, 'EUR');
+        $this->repository->incrementForToday(
+            $day,
+            1,
+            $event->revenueCents,
+            $event->currency
+        );
     }
 }

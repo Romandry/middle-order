@@ -24,18 +24,24 @@ final class MessengerOrderConfirmedTest extends KernelTestCase
 
         /** @var MessageBusInterface $bus */
         $bus = self::getContainer()->get(MessageBusInterface::class);
-        $bus->dispatch(new OrderConfirmed());
 
-        $today = (new \DateTimeImmutable())->format('Y-m-d');
+        $occuredAt = new \DateTimeImmutable('2026-02-13 00:00:00');
+        $bus->dispatch(new OrderConfirmed(
+            orderId: 'ORDER-123',
+            occurredAt: $occuredAt,
+            revenueCents: 500,
+            currency: 'EUR'
+        ));
 
         $row = $db->fetchAssociative(
-            'SELECT confirmed_orders, revenue_cents, currency FROM report_daily_sales WHERE day = :day',
-            ['day' => $today]
+            'SELECT confirmed_orders, revenue_cents, currency, day FROM report_daily_sales WHERE day = :day',
+            ['day' => $occuredAt->format('Y-m-d')]
         );
 
         self::assertNotFalse($row);
         self::assertSame(1, (int) $row['confirmed_orders']);
-        self::assertSame(0, (int) $row['revenue_cents']);
+        self::assertSame(500, (int) $row['revenue_cents']);
         self::assertSame('EUR', $row['currency']);
+        self::assertSame('2026-02-13', $row['day']);
     }
 }

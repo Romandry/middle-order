@@ -9,7 +9,6 @@ namespace App\Tests\Ordering\Application;
 use App\Ordering\Domain\Event\OrderConfirmed;
 use App\Reporting\Application\Handler\OrderConfirmedHandler;
 use App\Reporting\Application\Port\DailySalesRepository;
-use App\Reporting\Application\Projection\DailySalesProjection;
 use PHPUnit\Framework\TestCase;
 
 final class OrderConfirmedHandlerTest extends TestCase
@@ -40,24 +39,19 @@ final class OrderConfirmedHandlerTest extends TestCase
 
         $handler = new OrderConfirmedHandler($repo);
 
-        $handler(new OrderConfirmed());
+        $event = new OrderConfirmed(
+            orderId: 'Order-123',
+            occurredAt: new \DateTimeImmutable('2026-02-13 00:00:00'),
+            revenueCents: 1200,
+            currency: 'EUR',
+        );
+        $handler($event);
 
         self::assertSame(1, $repo->calls, 'Repository must be called exactly once');
         self::assertNotNull($repo->lastCall);
         self::assertSame(1, $repo->lastCall['orders'], 'Increment confirmed order');
-        self::assertSame(0, $repo->lastCall['revenue'], 'Revenue is 0 for this test');
+        self::assertSame(1200, $repo->lastCall['revenue'], 'Revenue is 0 for this test');
         self::assertSame('EUR', $repo->lastCall['currency'], 'Currency is fixed to EUR for this test');
-
-        $expedtedDay = (new \DateTimeImmutable())->format('Y-m-d');
-        self::assertSame($expedtedDay, $repo->lastCall['day']->format('Y-m-d'));
+        self::assertSame('2026-02-13', $repo->lastCall['day']->format('Y-m-d'), 'Day is fixed for this test');
     }
-    //    public function test_it_updates_projection_on_event(): void
-    //    {
-    //        $projection = new DailySalesProjection();
-    //        $handler = new OrderConfirmedHandler($projection);
-    //
-    //        $handler(new OrderConfirmed());
-    //
-    //        self::assertSame(1, $projection->confirmedOrders());
-    //    }
 }

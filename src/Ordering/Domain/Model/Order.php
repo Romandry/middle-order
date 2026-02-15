@@ -19,6 +19,7 @@ use App\Ordering\Domain\ValueObject\Sku;
 final class Order
 {
     private string $status;
+    private string $id;
 
     /**
      * @var list<OrderItem>
@@ -32,6 +33,7 @@ final class Order
 
     private function __construct(string $status)
     {
+        $this->id = bin2hex(random_bytes(16));
         $this->status = $status;
     }
 
@@ -83,7 +85,12 @@ final class Order
         }
 
         $this->status = 'confirmed';
-        $this->events[] = new OrderConfirmed();
+        $this->events[] = new OrderConfirmed(
+            $this->id(),
+            new \DateTimeImmutable('now'),
+            $this->total()->cents(),
+            $this->total()->currency()
+        );
     }
 
     /**
@@ -107,5 +114,9 @@ final class Order
     public function items(): array
     {
         return $this->items;
+    }
+    public function id(): string
+    {
+        return $this->id;
     }
 }
